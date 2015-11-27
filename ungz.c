@@ -371,9 +371,20 @@ int inflate(huffman_node* literals_root, huffman_node* distances_root) {
   return 0;
 }
 
-int main(int argc, char** argv) {
+#if defined(__MSVCRT__) || defined(__OS2__) || defined(_MSC_VER)
+#include <fcntl.h>
+#include <io.h>
+#endif
+
+int main( int argc, const char **argv ) {
+
+#if defined(__MSVCRT__) || defined(__OS2__) || defined(_MSC_VER)
+    setmode( fileno( stdin ), O_BINARY );
+    setmode( fileno( stdout ), O_BINARY );
+#endif
+
   if (argc < 2) printf("usage: %s file \n", argv[0]), exit(1);
-  FILE* f = fopen(argv[1], "r");
+  FILE* f = fopen(argv[1], "rb");
   if (!f) return fprintf(stderr,"can not open file\n");
   fseek(f, 0, SEEK_END); // seek to end of file
   size_t n = ftell(f); // get current file pointer
